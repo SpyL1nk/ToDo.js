@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+    form(method="post" action= path)
+      fieldset
+        p
+          label Pseudonyme : 
+            input(type="text", name="pseudonyme", value=user.pseudonyme)
+        p
+          label Mél : 
+            input(type="email", name="email", value=user.email)
+        p
+          label Prénom : 
+            input(type="text", name="firstname", value=user.firstname)
+        p
+          label Nom : 
+            input(type="text", name="lastname", value=user.lastname)
+        input(type="submit")
