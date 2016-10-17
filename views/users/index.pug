@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   h1= title
-  p Voici la liste des utilisateurs :
+  p Liste des utilisateurs :
   ul
     each user in users
-      li #{user.firstname} #{user.lastname}
+      li ##{user.id} : #{user.pseudonyme} - #{user.email} - #{user.firstname} #{user.lastname} - Créé le : #{user.createdAt} - Dernières mise à jour : #{user.updatedAt}

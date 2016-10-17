@@ -5,10 +5,18 @@ const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const sass = require('node-sass-middleware')
+const methodOverride = require('method-override')
 
 // Constantes et initialisations
 const PORT = process.PORT || 8080
 const app = express()
+
+// Initialisation de la base de données
+const sqlite = require('sqlite')
+
+sqlite.open(`./express.sqlite`).then((result) => {
+ 	return sqlite.run(`CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, pseudonyme, email, firstname, lastname, createdAt, updatedAt)`)
+})
 
 // Mise en place des vues
 app.set('views', path.join(__dirname, 'views'));
