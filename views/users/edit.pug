@@ -1,6 +1,10 @@
 extends ../layout
 
 block content
+    if (errorList)
+        ul
+            each msg in errorList
+                li= msg
     form(method="post" action= path)
       fieldset
         p
@@ -12,6 +16,12 @@ block content
         p
           label Prénom : 
             input(type="text", name="firstname", value=user.firstname)
+        p
+          label Mot de passe : 
+            input(type="password", name="password")
+        p
+          label Vérification du mot de passe : 
+            input(type="password", name="password_check")
         p
           label Nom : 
             input(type="text", name="lastname", value=user.lastname)

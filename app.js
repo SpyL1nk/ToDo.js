@@ -6,17 +6,23 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const sass = require('node-sass-middleware')
 const methodOverride = require('method-override')
+const session = require('express-session')
 
 // Constantes et initialisations
 const PORT = process.PORT || 8080
 const app = express()
 
-// Initialisation de la base de données
+// Initialisation des sessions
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'TD T0D0 L15T',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
 const sqlite = require('sqlite')
 
-sqlite.open(`./express.sqlite`).then((result) => {
- 	return sqlite.run(`CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, pseudonyme, email, firstname, lastname, createdAt, updatedAt)`)
-})
+
 
 // Mise en place des vues
 app.set('views', path.join(__dirname, 'views'));
@@ -25,6 +31,7 @@ app.set('view engine', 'pug');
 // Middleware pour parser le body
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(methodOverride('_method'))
 
 // Préprocesseur sur les fichiers scss -> css
 app.use(sass({
@@ -40,6 +47,7 @@ app.use(express.static(path.join(__dirname, 'assets')))
 // La liste des différents routeurs (dans l'ordre)
 app.use('/', require('./routes/index'))
 app.use('/users', require('./routes/users'))
+app.use('/users', require('./routes/sessions'))
 
 // Erreur 404
 app.use(function(req, res, next) {
@@ -72,6 +80,13 @@ app.use(function(err, req, res, next) {
   })
 })
 
-app.listen(PORT, () => {
-  console.log('Serveur démarré sur le port : ', PORT)
+sqlite.open(`./express.sqlite`).then((result) => {
+    console.log('DATABASE > Successfuly opened database')
+ 	return sqlite.run(`CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, pseudonyme, email, password, firstname, lastname, createdAt, updatedAt)`)
+}).then(() => {
+    console.log('DATABASE > Tables created or already exists in database')
+    
+    app.listen(PORT, () => {
+        console.log('APPLICATION > Server started, listenning on port', PORT)
+    })
 })
