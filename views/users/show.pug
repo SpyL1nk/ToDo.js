@@ -1,9 +1,23 @@
 extends ../layout
 
 block content
-    if(user)
-        h2 Informations de l'utilisateur n°#{user.id} :
-        p ##{user.id} : #{user.pseudonyme} - #{user.email} - #{user.firstname} #{user.lastname} - Créé le : #{user.createdAt} - Dernières mise à jour : #{user.updatedAt}
-    else
-        h2 Impossible de trouver l'utilisateur :
-        p L'identifiant utilisé ne nous a pas permis de trouver d'utilisateur dans la base de données. Si vous pensez qu'il s'agit d'une erreur, veuillez contacter l'administateur.
+    h1= title
+
+    p Voici l'utilisateur :
+
+    table(border=1)
+        tr
+            th Id
+            td= user.id
+        tr
+            th Pseudonyme
+            td= user.pseudonyme
+        tr
+            th Email
+            td= user.email
+        tr
+            th Prénom
+            td= user.firstname
+        tr
+            th Nom
+            td= user.lastname

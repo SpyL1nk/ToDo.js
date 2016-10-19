@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+    if (errorList)
+        ul
+            each msg in errorList
+                li= msg
+    form(method="post" action= "/sessions")
+        fieldset
+            p
+              label Pseudonyme : 
+                input(type="text", name="pseudonyme")
+            p
+              label Mot de passe : 
+                input(type="password", name="password")
+            input(type="submit")

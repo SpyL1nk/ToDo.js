@@ -1,28 +1,46 @@
 extends ../layout
 
 block content
-    if (errorList)
-        ul
-            each msg in errorList
-                li= msg
+    if (flash)
+        if(flash.errorList)
+            ul
+            - for (var i = 0; i < flash.errorList.length; i++){
+                li= flash.errorList[i]
+            - }
+        if(flash.successList)
+            ul
+            - for (var i = 0; i < flash.successList.length; i++){
+                li= flash.successList[i]
+            - }
+            
+    h1= title
+
+    p Editer l'utilisateur :
+    
     form(method="post" action= path)
-      fieldset
-        p
-          label Pseudonyme : 
-            input(type="text", name="pseudonyme", value=user.pseudonyme)
-        p
-          label Mél : 
-            input(type="email", name="email", value=user.email)
-        p
-          label Prénom : 
-            input(type="text", name="firstname", value=user.firstname)
-        p
-          label Mot de passe : 
-            input(type="password", name="password")
-        p
-          label Vérification du mot de passe : 
-            input(type="password", name="password_check")
-        p
-          label Nom : 
-            input(type="text", name="lastname", value=user.lastname)
-        input(type="submit")
+        table(border=1)
+            tr
+                th Pseudonyme :
+                td
+                    input(type="text", name="pseudonyme", value=user.pseudonyme)
+            tr
+                th Mél :
+                td
+                    input(type="email", name="email", value=user.email)
+            tr
+                th Prénom : 
+                td
+                    input(type="text", name="firstname", value=user.firstname)
+            tr
+                th Nom :
+                td
+                    input(type="text", name="lastname", value=user.lastname)
+            tr
+                th Mot de passe :
+                td
+                    input(type="password", name="password")
+            tr
+                th Vérification du mot de passe : 
+                td
+                    input(type="password", name="password_check")
+        input(type="submit", value='Envoyer')
