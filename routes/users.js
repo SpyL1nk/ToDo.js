@@ -1,5 +1,8 @@
 const router = require('express').Router()
+
+/* Require models */
 const User = require('../models/user')
+//const User = require('../models/user-redis')
 
 /* Users : Get users list */
 router.get('/', (req, res, next) => {
@@ -14,7 +17,7 @@ router.get('/', (req, res, next) => {
     if (offset < 0) offset = 0
     
     Promise.all([
-        User.getAll(limit, offset),
+        User.getAll(),
         User.count()
     ]).then((result) => {
         res.format({
@@ -24,7 +27,7 @@ router.get('/', (req, res, next) => {
                     users: result[0],
                     count: result[1],
                     limit: limit,
-                    offset: offset
+                    //offset: offset
                 })
             },
             json: () => {
@@ -32,7 +35,7 @@ router.get('/', (req, res, next) => {
                     data: result[0],
                     meta: {
                         count: result[1].count,
-                        offset: offset,
+                        //offset: offset,
                         limit: limit
                     }
                 })
@@ -42,7 +45,8 @@ router.get('/', (req, res, next) => {
 })
 
 /* Users : Edit user by id */
-router.get('/:id(\\d+)/edit', (req, res, next) => {
+//router.get('/:id(\\d+)/edit', (req, res, next) => {
+router.get('/:id/edit', (req, res, next) => {
 	console.log('- Route => Edit user by id')
     res.format({
         html: () => {
@@ -90,7 +94,8 @@ router.get('/add', (req, res, next) => {
 })
 
 /* Users : Get by id */
-router.get('/:id(\\d+)', (req, res, next) => {
+//router.get('/:id(\\d+)', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
 	console.log('- Route => Get user by id')
 	User.get(req.params.id).then((result) => {
         if(!result) return next()
@@ -152,7 +157,7 @@ router.post('/', (req, res, next) => {
                     sess.flash = {'errorList': errorList}
                 }
                 
-                res.redirect(301, '/users/add' )
+                res.redirect('/users/add' )
             },
             json: () => {
                 res.send({
@@ -167,7 +172,7 @@ router.post('/', (req, res, next) => {
             res.format({
                 html: () => { 
                     /* TODO: Add a session flash to alert user his modification is OK */
-                    res.redirect(301, '/users')
+                    res.redirect('/users')
                 },
                 json: () => {
                     res.send({
@@ -183,13 +188,14 @@ router.post('/', (req, res, next) => {
 })
 
 /* Users : Delete user by id route */
-router.delete('/:id(\\d+)', (req, res, next) => {
+//router.delete('/:id(\\d+)', (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
 	console.log('- Route => Delete user by id')
 	User.remove(req.params.id).then((result) => {
         res.format({
             html: () => { 
                 /* TODO: Add a session flash to alert user his modification is OK */
-                res.redirect(301, '/users') },
+                res.redirect('/users') },
             json: () => {
                 res.set(`Content-Type`, 'application/json')
                 res.send({
@@ -203,6 +209,7 @@ router.delete('/:id(\\d+)', (req, res, next) => {
 })
 
 /* Users : Update user by id route */
+//router.put('/:id(\\d+)', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
 	console.log(`- Route => Update User by id`)
     /* Check forms to catch errors */
@@ -229,7 +236,7 @@ router.put('/:id', (req, res, next) => {
                     sess.flash = {'errorList': errorList}
                 }
                 
-                res.redirect(301, '/users/' + req.params.id + '/edit' ) },
+                res.redirect('/users/' + req.params.id + '/edit' ) },
             json: () => {
                 res.send({
                     status: 'error',
@@ -243,7 +250,7 @@ router.put('/:id', (req, res, next) => {
             res.format({
                 html: () => { 
                     /* TODO: Add a session flash to alert user his modification is OK */
-                    res.redirect(301, '/users') },
+                    res.redirect('/users') },
                 json: () => {
                     res.send({
                         status: 'success',

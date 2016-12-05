@@ -1,0 +1,47 @@
+extends ../layout
+
+block content
+    if (flash)
+        if(flash.errorList)
+            ul
+            - for (var i = 0; i < flash.errorList.length; i++){
+                li= flash.errorList[i]
+            - }
+        if(flash.successList)
+            ul
+            - for (var i = 0; i < flash.successList.length; i++){
+                li= flash.successList[i]
+            - }
+            
+    h1= title
+    
+    form(method="post" action= path)
+        table(border=1)
+            tr
+                th Titre :
+                td
+                    input(type="text", name="title", value= task.title)
+            tr
+                th Description :
+                td
+                    input(type="text" name="desc" value= task.desc)
+            if(!task.id)
+                tr
+                    th Équipe : 
+                    td
+                        select(name="teamId")
+                            each team in teamList
+                                option(value=team.id) #{team.name}
+            //-
+                if(task.id && task.teamId != '')
+                    tr
+                        th Assigner une personne à la tâche :
+                        td
+                            select(name="assignementId")
+                                each user in usersList
+                                    option(value=user.id) #{user.name}
+            tr
+                th Valider la tâche :
+                td
+                    input(type="checkbox", name="completion", value="true")
+        input(type="submit", value='Envoyer')

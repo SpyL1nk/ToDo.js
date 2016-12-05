@@ -33,4 +33,4 @@ npm-debug.log
 assets/css/*.css
 
 # Ignore SQLite DB
-*.sqlite
+#*.sqlite

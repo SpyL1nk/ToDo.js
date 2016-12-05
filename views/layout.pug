@@ -2,6 +2,64 @@ doctype html
 html
   head
     title= title
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
     link(rel='stylesheet', href='/css/style.css')
   body
+    header
+        nav.navbar.navbar-default
+            div.container-fluid
+                div.navbar-header
+                    button(type='button' data-toggle='collapse' data-target='#navbar-collapse-1' aria-expanded='false').navbar-toggle.collapsed
+                        span.sr-only Toggle navigation
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                div#navbar-collapse-1.collapse.navbar-collapse
+                    ul.nav.navbar-nav.navbar-left
+                        li.dropdown
+                            a(href='#' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false').dropdown-toggle ToDo Lists #[span.caret]
+                            ul.dropdown-menu
+                                li: a(href='#') Rechercher les listes par nom
+                                li(role='separator').divider
+                                li Listes favorites
+                                li: a(href='#') Liste n°1
+                                li: a(href='#') Liste n°2
+                                li(role='separator').divider
+                                li Listes personnelles
+                                li: a(href='#') Liste personnelle n°1
+                                li(role='separator').divider
+                                li Listes en équipe
+                                li: a(href='#') Liste en équipe n°1
+                    form.navbar-form.navbar-left
+                        div.form-group
+                            input(type='text').form-control
+                        button(type="submit").btn.btn-default #[span.glyphicon.glyphicon-search]
+                    span.navbar-brand
+                        a(href='') ToDo.js
+                    ul.nav.navbar-nav.navbar-right
+                        li.dropdown
+                            a(href='' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false').dropdown-toggle #[span.glyphicon.glyphicon-plus]
+                            ul.dropdown-menu
+                                li: a(href='') Créer une nouvelle liste personnelle
+                                li: a(href='') Créer une nouvelle liste en équipe
+                                li: a(href='') Créer une nouvelle équipe (planned)
+                        li.dropdown
+                            a(href='' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false').dropdown-toggle Pseudonyme + PP
+                            ul.dropdown-menu
+                                li: a(href='') Profil
+                                li: a(href='') Paramètres
+                                li: a(href='') Langage
+                                li: a(href='') Aide
+                                li: a(href='') Se déconnecter
+                        li.dropdown
+                            a(href='' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false').dropdown-toggle #[span.glyphicon.glyphicon-bell]
+                            ul.dropdown-menu
+                                li: a(href='') Activité ID
+                                li: a(href='') Activité ID
+                                li: a(href='') Activité ID
+                                li: a(href='') Activité ID
+    
     block content
+
+    script(src='/js/jquery-3.1.1.min.js')
+    script(src='/js/bootstrap.min.js')

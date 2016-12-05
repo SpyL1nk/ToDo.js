@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  h1= title
+  
+  p Liste des tâches à effectuer :
+  
+  table(border=1)
+    tr
+        th Titre
+        th Créateur
+        th Date de création
+        th Assigné à
+        th Actions
+        
+    each todo in todos
+        tr
+            td
+                a(href="/todos/" + todo.id) #{todo.title}
+            td= todo.userId
+            td= todo.createdAt
+            td= todo.assignedTo
+            td
+                ul
+                    li
+                        form(action='/todos/' + todo.id + '?_method=DELETE')
+                            button(type="submit").btn.btn-default #[span.glyphicon.glyphicon-trash]
+                    li
+                        form(method="post" action='/todos/' + todo.id + '?_method=PUT')
+                            button(type="submit" name="completion" value="true").btn.btn-default #[span.glyphicon.glyphicon-ok]
+                    li
+                        form(action='/todos/' + todo.id + '/edit')
+                            button(type="submit").btn.btn-default #[span.glyphicon.glyphicon-cog]
+
+    ul.pagination
+        - var nbPage = Math.ceil(count / limit)
+        - for (var i = 0; i < nbPage; i++){
+            li
+                a(href='/todos?limit=' + limit + '?offset=' + offset + (i*limit)) Page #{i + 1}
+        - }

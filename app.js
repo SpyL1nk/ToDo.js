@@ -8,12 +8,16 @@ const express = require('express')
     , methodOverride = require('method-override')
     , session = require('express-session')
     , sqlite = require('sqlite')
+    
+// Models importation
+const Session = require('./models/session')
 
 // Constantes et initialisations
 const PORT = process.PORT || 8080
     , app = express()
 
 // Initialisation des sessions
+// TODO: Generate random secret seed for sessions
 app.set('trust proxy', 1)
 app.use(session({
   secret: 'TD T0D0 L15T',
@@ -44,10 +48,54 @@ app.use(sass({
 // On sert les fichiers statiques
 app.use(express.static(path.join(__dirname, 'assets')))
 
-// La liste des différents routeurs (dans l'ordre)
+// Vérification de la connexion
+app.use((req, res, next) => {
+    // Si le client veut afficher la page sessions, aucune vérification à faire
+    if(req.url == '/sessions') {
+        next()
+    } else {
+        // Sinon on vérifie que le client est bien connecté
+        if(req.session.accessToken || req.headers['x-accesstoken']) {
+            var accessToken = (req.session.accessToken || req.headers['x-accesstoken'])
+            
+            // T0D0: Add informations about the client (IP Address, User Agent) to avoid session hijacking
+            if(Session.checkAuth(accessToken)) {
+                // La session du client est valide, il peut accéder à la ressource
+                next()
+            } else {
+                res.format({
+                    html: () => {
+                        res.redirect('/sessions')
+                    },
+                    json: () => {
+                        let err = new Error('You need to be authenticate to access this resource.')
+                        err.status = 400
+                        next(err)
+                    }
+                })
+            }
+        } else {
+            // T0D0: Add Cookies auth' for persistence
+            res.format({
+                html: () => {
+                    res.redirect('/sessions')
+                },
+                json: () => {
+                    let err = new Error('You need to be authenticate to access this resource.')
+                    err.status = 400
+                    next(err)
+                }
+            })
+        }
+    }
+})
+
+// La liste des différents routeurs
 app.use('/', require('./routes/index'))
-app.use('/users', require('./routes/users'))
 app.use('/sessions', require('./routes/sessions'))
+//app.use('/teams', require('./routes/teams'))
+app.use('/todos', require('./routes/todos'))
+app.use('/users', require('./routes/users'))
 
 // Erreur 404
 app.use(function(req, res, next) {
@@ -80,10 +128,10 @@ app.use(function(err, req, res, next) {
   })
 })
 
-sqlite.open(`./express.sqlite`).then((result) => {
+sqlite.open(`./todo-js.sqlite`).then((result) => {
     console.log('DATABASE > Successfuly opened database')
  	return sqlite.run(
-        'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, pseudonyme, email, password, firstname, lastname, createdAt, updatedAt)'
+        'CREATE TABLE IF NOT EXISTS users (id, pseudonyme, email, password, firstname, lastname, createdAt, updatedAt, teamId)'
     )
 }).then(() => {
     console.log('DATABASE > Table users created or already exists in database')
@@ -93,6 +141,18 @@ sqlite.open(`./express.sqlite`).then((result) => {
     )
 }).then(() => {
     console.log('DATABASE > Table sessions created or already exists in database')
+
+    return sqlite.run(
+        'CREATE TABLE IF NOT EXISTS todos (id, userId, teamId, title, desc, createdAt, updatedAt, completedAt, assignedTo)'
+    )
+}).then(() => {
+    console.log('DATABASE > Table todos created or already exists in database')
+
+    return sqlite.run(
+        'CREATE TABLE IF NOT EXISTS teams (id, name, ownerId, desc, createdAt, updatedAt)'
+    )
+}).then(() => {
+    console.log('DATABASE > Table teams created or already exists in database')
     
     app.listen(PORT, () => {
         console.log('APPLICATION > Server started, listenning on port', PORT)
